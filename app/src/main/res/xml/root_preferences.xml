@@ -1,0 +1,22 @@
+<PreferenceScreen
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+            app:title="@string/secure">
+
+        <Preference
+                app:key="secure"
+                app:title="@string/secure"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            app:title="@string/alarm">
+
+        <SwitchPreferenceCompat
+                app:key="disturb"
+                app:title="@string/no_disturb_mode"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
