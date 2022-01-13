@@ -3,38 +3,54 @@ package com.example.android.activities;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import androidx.fragment.app.Fragment;
 import com.example.android.R;
-import com.google.android.material.tabs.TabItem;
+import com.example.android.activities.fragment.Calendar;
+import com.example.android.activities.fragment.Category;
+import com.example.android.activities.fragment.Daily;
+import com.example.android.dto.Todo;
+import com.example.android.util.MyUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
+    private Fragment calendarFragment;
+    private Fragment categoryFragment;
+    private Fragment dailyFragment;
 
-    private TabItem calendar;
-    private TabItem category;
-    private TabItem daily;
-
-    private View setting;
-
-    private Button addTodo;
+    private FloatingActionButton addTodo;
 
     private long backKeyPressedTime = 0;
+
+    private List<Todo> list;
+
+    public MainActivity() {
+        list = new ArrayList<>();
+        list.add(new Todo("하체 운동", "운동", "3일 마다 돌아오는 하체 운동 시간", false));
+        list.add(new Todo("C언어 2주차", "학교 과제", "", false));
+        list.add(new Todo("안드로이드 3주차", "팀노바 과제", "", false));
+        list.add(new Todo("점심 약속", "일상", "", true));
+        list.add(new Todo("안드로이드 1주차", "팀노바 과제", "", true));
+        MyUtils.setMainActivity(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        assign();
     }
 
     @Override
@@ -42,44 +58,6 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menus, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-        return true;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        assign();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setListener();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @Override
@@ -94,42 +72,60 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void assign() {
-//        tabLayout = (TabLayout) findViewById(R.id.mainTab);
-//        calendar = (TabItem) findViewById(R.id.calendar);
-//        category = (TabItem) findViewById(R.id.category);
-//        daily = (TabItem) findViewById(R.id.daily);
-//        addTodo = (Button) findViewById(R.id.addTodo);
+        tabLayout = findViewById(R.id.mainTab);
+        calendarFragment = new Calendar();
+        categoryFragment = new Category();
+        dailyFragment = new Daily();
+        addTodo = findViewById(R.id.addTodo);
+        setFragment();
+        setListener();
     }
 
     private void setListener() {
-//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                if(tab.equals(calendar)) {
-//
-//                } else if(tab.equals(category)) {
-//
-//                } else if(tab.equals(daily)) {
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//
-//            }
-//        });
-//        addTodo.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                setFragment();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        addTodo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), AddTodo.class));
+            }
+        });
+    }
+
+    private void setFragment() {
+        Fragment selected = null;
+        int position = tabLayout.getSelectedTabPosition();
+        if(position == 0) {
+            selected = dailyFragment;
+        } else if(position == 1) {
+            selected = categoryFragment;
+        } else if(position == 2) {
+            selected = calendarFragment;
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout, selected).commit();
+    }
+
+    // activity_add_todo 수정 시 고쳐야 함
+    public void showTodo(Todo todo) {
+        startActivity(MyUtils.getIntent(todo).setClass(getApplicationContext(), AddTodo.class));
+    }
+
+    public List<Todo> getList() {
+        return list;
     }
 
 }
