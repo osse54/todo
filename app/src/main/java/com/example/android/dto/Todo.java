@@ -11,14 +11,20 @@ package com.example.android.dto;
  */
 
 import android.content.Intent;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.example.android.util.MyUtils;
+import com.google.gson.annotations.Expose;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Todo {
-    private static long NEXT = 0;
+public class Todo implements Comparable<Todo> {
+    @Expose(serialize = false, deserialize = false)
+    public static long NEXT = 0;
+
+    @Expose(serialize = true, deserialize = true)
     public final long no;      // 식별자로써 사용
 
     private String name;        // 일정 제목
@@ -33,32 +39,20 @@ public class Todo {
     private String end;           // 일정 종료 시각
     private String cycle;         // 일정의 주기
 
-    public Todo(String name, String category, String explain, boolean complete) {
-        no = NEXT++;    // NEXT가 가진 수를 no에 할당 후 +1
+    private Todo(String name, String category, String explain, boolean complete, long no) {
+        this.no = no;
         this.name = name;
         this.category = category;
         this.explain = explain;
         this.complete = complete;
-        start = MyUtils.getNow();
     }
 
-    public Todo(String name, String category, String explain, boolean complete, String end) {
-        no = NEXT++;    // NEXT가 가진 수를 no에 할당 후 +1
-        this.name = name;
-        this.category = category;
-        this.explain = explain;
-        this.complete = complete;
-        this.end = end;
+    public static Todo getTodo(String name, String category, String explain, boolean complete, long no) {
+        return new Todo(name, category, explain, complete, no);
     }
 
-    public Todo(String name, String category, String explain, boolean complete, String end, String cycle) {
-        no = NEXT++;    // NEXT가 가진 수를 no에 할당 후 +1
-        this.name = name;
-        this.category = category;
-        this.explain = explain;
-        this.complete = complete;
-        this.end = end;
-        this.cycle = cycle;
+    public static Todo getTodo(String name, String category, String explain, boolean complete) {
+        return new Todo(name, category, explain, complete, NEXT++);
     }
 
     public void setStart(String start) {
@@ -119,5 +113,27 @@ public class Todo {
             return false;
         }
         return ((Todo) obj).no == no;
+    }
+
+    @NonNull
+    @NotNull
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    public long getNo() {
+        return no;
+    }
+
+    @Override
+    public int compareTo(Todo todo) {
+        int result = 0;
+        if(no > todo.no) {
+            result = 1;
+        } else if(no < todo.no) {
+            result = -1;
+        }
+        return result;
     }
 }

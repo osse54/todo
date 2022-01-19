@@ -7,5 +7,17 @@
         android:title="방해 금지 모드"
         app:showAsAction="never"
         android:checkable="true" />
+    
+    <item
+        android:title="취소"
+        app:showAsAction="always" />
+    
+    <item
+        android:title="삭제하기"
+        app:showAsAction="never" />
+    
+    <item
+        android:title="카테고리 추가"
+        app:showAsAction="never" />
 
 </menu>

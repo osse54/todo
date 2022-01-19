@@ -1,13 +1,12 @@
 package com.example.android.activities.fragment;
-import android.util.Log;
+import android.widget.CalendarView;
+import android.widget.ImageButton;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.ScrollView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,9 +19,8 @@ import com.example.android.util.MyUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Date;
 
-public class Daily extends TodoFragment {
+public class CalendarFragment extends TodoFragment {
 
     private RecyclerView recyclerViewUncomplete;
     private DayAdapter myExpandableAdapterUncomplete;
@@ -33,29 +31,35 @@ public class Daily extends TodoFragment {
     private DayAdapter myExpandableAdapterComplete;
     private LinearLayoutManager linearLayoutManagerComplete;
     private ImageButton expandComplete;
-
-    private TextView dailyDateView;
+    private CalendarView calendarView;
+    private long nowDate;
 
     @Nullable
     @org.jetbrains.annotations.Nullable
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.daily, container, false);
+        View view = inflater.inflate(R.layout.calendar, container, false);
 
-        dailyDateView = view.findViewById(R.id.dailyDateView);
+        calendarView = view.findViewById(R.id.calendarView);
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
+                MyUtils.setDate(i, i1, i2);
+            }
+        });
+        nowDate = calendarView.getDate();
 
         expandUncomplete = view.findViewById(R.id.uncompleteExpandBtn);
+        expandComplete = view.findViewById(R.id.completeExpandBtn);
 
         recyclerViewUncomplete = view.findViewById(R.id.calendarRecyclerViewUnComplete);
+
         if(linearLayoutManagerUncomplete == null) {
             linearLayoutManagerUncomplete = new LinearLayoutManager(getActivity());
         }
         if(myExpandableAdapterUncomplete == null) {
             myExpandableAdapterUncomplete = new DayAdapter(false);
         }
-
-        expandComplete = view.findViewById(R.id.completeExpandBtn);
-
         recyclerViewComplete = view.findViewById(R.id.calendarRecyclerViewComplete);
         if(linearLayoutManagerComplete == null) {
             linearLayoutManagerComplete = new LinearLayoutManager(getActivity());
@@ -64,15 +68,17 @@ public class Daily extends TodoFragment {
             myExpandableAdapterComplete = new DayAdapter(true);
         }
 
+        recyclerViewUncomplete.setLayoutManager(linearLayoutManagerUncomplete);
+        recyclerViewUncomplete.setAdapter(myExpandableAdapterUncomplete);
+        recyclerViewComplete.setLayoutManager(linearLayoutManagerComplete);
+        recyclerViewComplete.setAdapter(myExpandableAdapterComplete);
+
+
         myExpandableAdapterUncomplete.notifyDataSetChanged();
         myExpandableAdapterComplete.notifyDataSetChanged();
         setListener();
-        return view;
-    }
 
-    private void setListener() {
-        expandUncomplete.setOnClickListener(new OnExpandButtonClickListener(recyclerViewUncomplete, expandUncomplete));
-        expandComplete.setOnClickListener(new OnExpandButtonClickListener(recyclerViewComplete, expandComplete));
+        return view;
     }
 
     @Override
@@ -81,14 +87,18 @@ public class Daily extends TodoFragment {
         MyUtils.adapters = new RecyclerView.Adapter[]{myExpandableAdapterUncomplete, myExpandableAdapterComplete};
         myExpandableAdapterUncomplete.refresh();
         myExpandableAdapterComplete.refresh();
-        setDailyDateView();
         super.onResume();
     }
 
     @Override
     public void onStop() {
         detachView();
+        resetCalendarView();
         super.onStop();
+    }
+
+    private void resetCalendarView() {
+        calendarView.setDate(nowDate);
     }
 
     public void detachView() {
@@ -113,9 +123,13 @@ public class Daily extends TodoFragment {
         }
     }
 
+    private void setListener() {
+        expandUncomplete.setOnClickListener(new OnExpandButtonClickListener(recyclerViewUncomplete, expandUncomplete));
+        expandComplete.setOnClickListener(new OnExpandButtonClickListener(recyclerViewComplete, expandComplete));
+    }
+
     public ArrayList<TodoViewHolder> getViewHolderList() {
-        ArrayList<TodoViewHolder> list = new ArrayList<>();
-        list.addAll(myExpandableAdapterUncomplete.getViewHolderList());
+        ArrayList<TodoViewHolder> list = new ArrayList<>(myExpandableAdapterUncomplete.getViewHolderList());
         list.addAll(myExpandableAdapterComplete.getViewHolderList());
         return list;
     }
@@ -124,19 +138,5 @@ public class Daily extends TodoFragment {
     public void refresh() {
         myExpandableAdapterUncomplete.refresh();
         myExpandableAdapterComplete.refresh();
-    }
-
-    private void setDailyDateView() {
-        String time = MyUtils.getStringFromDate(new Date(), MyUtils.SHOWN_DATE_PATTERN);
-        Log.i("타임1", time);
-        Log.i("타임2", dailyDateView.getText().toString());
-        if(!time.equals(dailyDateView.getText().toString())) {
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    dailyDateView.setText(time);
-                }
-            });
-        }
     }
 }

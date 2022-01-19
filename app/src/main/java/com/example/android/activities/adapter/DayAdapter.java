@@ -3,28 +3,25 @@ package com.example.android.activities.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.android.R;
-import com.example.android.activities.MainActivity;
 import com.example.android.dto.Todo;
+import com.example.android.listener.CheckBoxCheckedChangeListener;
 import com.example.android.util.MyUtils;
-import com.example.android.util.Refreshable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> implements Refreshable {
+public class DayAdapter extends RecyclerView.Adapter<TodoViewHolder> {
 
-    private List<Todo> myList;
+    private ArrayList<Todo> myList;
+    private ArrayList<TodoViewHolder> viewHolderList;
     private boolean check;
 
     public DayAdapter(boolean check) {
-        this.myList = new ArrayList<>();
+        myList = new ArrayList<>();
+        viewHolderList = new ArrayList<>();
         this.check = check;
         refresh();
     }
@@ -32,31 +29,31 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> i
     @NonNull
     @NotNull
     @Override
-    public DayViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+    public TodoViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.todo_recycler_view, parent, false);
-        return new DayViewHolder(view);
+        return new TodoViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull DayViewHolder holder, int position) {
-        Todo todo = myList.get(position);
-        holder.checkBox.setText(todo.getName());
+    public void onBindViewHolder(@NonNull @NotNull TodoViewHolder holder, int position) {
+        Todo todo = myList.get(holder.getAbsoluteAdapterPosition());
+        holder.no = todo.no;
+        holder.complete = todo.isComplete();
+        String date = "   ";
+        if(todo.getEnd() != null) {
+            int[] ymd = MyUtils.getDateToInt(todo.getEnd());
+            date += MyUtils.getDateText(ymd[0], ymd[1], ymd[2]);
+        }
+        holder.checkBox.setText(todo.getName() + date);
         holder.checkBox.setChecked(todo.isComplete());
-        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                myList.get(holder.getAdapterPosition()).setComplete(!check);
-                MyUtils.refresh();
-                notifyItemRemoved(holder.getAdapterPosition());
-//                notifyDataSetChanged(); 에러
-            }
-        });
+        holder.setCheckBoxListener(new CheckBoxCheckedChangeListener(holder, myList, this, check));
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MyUtils.getMainActivity().showTodo(todo);
             }
         });
+        viewHolderList.add(holder);
     }
 
     @Override
@@ -64,7 +61,6 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> i
         return myList.size();
     }
 
-    @Override
     public void refresh() {
         myList.clear();
         for(Todo temp : MyUtils.getMainActivity().getList()) {
@@ -72,18 +68,16 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> i
                 myList.add(temp);
             }
         }
+        notifyDataSetChanged();
     }
 
-    public class DayViewHolder extends RecyclerView.ViewHolder {
+    public void insert(Todo todo) {
+        refresh();
+        notifyItemInserted(myList.indexOf(todo));
+        notifyDataSetChanged();
+    }
 
-        private CheckBox checkBox;
-        private Button button;
-
-        public DayViewHolder(@NonNull @NotNull View itemView) {
-            super(itemView);
-            checkBox = itemView.findViewById(R.id.todoChk);
-            button = itemView.findViewById(R.id.todoBtn);
-            button.setText("자세히");
-        }
+    public ArrayList<TodoViewHolder> getViewHolderList() {
+        return viewHolderList;
     }
 }

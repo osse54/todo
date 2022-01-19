@@ -1,12 +1,3 @@
 <resources>
-    <string name="app_name">나의 하루</string>
-    <string name="title_activity_settings">설정</string>
-
-    <!-- preference -->
-    <string name="alarm">알림</string>
-    <string name="secure">보안</string>
-    <string name="no_disturb_mode">방해 금지 모드</string>
-    <string name="password">비밀번호</string>
-    <string name="set_password">비밀번호 설정</string>
-
+	<string name="app_name">나의 하루</string>
 </resources>

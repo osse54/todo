@@ -37,7 +37,6 @@
 	
 	<androidx.recyclerview.widget.RecyclerView
 			android:id="@+id/todoRecyclerView"
-			android:visibility="gone"
 			android:nestedScrollingEnabled="false"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content" />

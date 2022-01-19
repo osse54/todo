@@ -1,4 +1,4 @@
-package com.example.android.activities;
+package com.example.android.listener;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -17,10 +17,10 @@ public class OnExpandButtonClickListener implements View.OnClickListener {
     public void onClick(View v) {
         if(recyclerView.getVisibility() == View.VISIBLE) {
             recyclerView.setVisibility(View.GONE);
-            button.animate().setDuration(200).rotation(0f);
+            button.animate().setDuration(200).rotation(180f);
         } else {
             recyclerView.setVisibility(View.VISIBLE);
-            button.animate().setDuration(200).rotation(180f);
+            button.animate().setDuration(200).rotation(0f);
         }
     }
 }

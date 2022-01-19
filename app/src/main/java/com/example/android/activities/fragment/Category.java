@@ -4,20 +4,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.android.R;
-import com.example.android.activities.MainActivity;
 import com.example.android.activities.adapter.CategoryAdapter;
+import com.example.android.activities.adapter.CategoryTodoAdapter;
+import com.example.android.activities.adapter.TodoViewHolder;
 import com.example.android.util.MyUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class Category extends Fragment {
+import java.util.ArrayList;
+
+public class Category extends TodoFragment {
 
     private RecyclerView recyclerView;
     private CategoryAdapter categoryAdapter;
@@ -30,8 +30,12 @@ public class Category extends Fragment {
         View view = inflater.inflate(R.layout.category, container, false);
 
         recyclerView = view.findViewById(R.id.categoryRecyclerView);
-        linearLayoutManager = new LinearLayoutManager(getContext());
-        categoryAdapter = new CategoryAdapter();
+        if(linearLayoutManager == null) {
+            linearLayoutManager = new LinearLayoutManager(getContext());
+        }
+        if(categoryAdapter == null) {
+            categoryAdapter = new CategoryAdapter();
+        }
         recyclerView.setAdapter(categoryAdapter);
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -43,6 +47,7 @@ public class Category extends Fragment {
     @Override
     public void onResume() {
         postView();
+        refresh();
         super.onResume();
     }
 
@@ -52,12 +57,26 @@ public class Category extends Fragment {
         super.onStop();
     }
 
-    private void detachView() {
-        Toast.makeText(MyUtils.getMainActivity(), "Category, 뷰 제거", Toast.LENGTH_SHORT).show();
+    public void detachView() {
+        if(recyclerView.getAdapter() != null) {
+            recyclerView.setAdapter(null);
+            recyclerView.setLayoutManager(null);
+        }
     }
 
-    private void postView() {
-        Toast.makeText(MyUtils.getMainActivity(), "Category, 뷰 게시", Toast.LENGTH_SHORT).show();
+    public void postView() {
+        if(recyclerView.getAdapter() == null) {
+            recyclerView.setAdapter(categoryAdapter);
+            recyclerView.setLayoutManager(linearLayoutManager);
+        }
     }
 
+    public ArrayList<TodoViewHolder> getViewHolderList() {
+        return new ArrayList<>(categoryAdapter.getViewHolderList());
+    }
+
+    @Override
+    public void refresh() {
+        categoryAdapter.refresh();
+    }
 }
