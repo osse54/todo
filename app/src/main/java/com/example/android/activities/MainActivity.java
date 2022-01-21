@@ -1,14 +1,11 @@
 package com.example.android.activities;
-import android.animation.Animator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Handler;
-import android.util.Log;
 
 import android.content.Intent;
 import android.view.*;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.airbnb.lottie.LottieAnimationView;
 import com.example.android.R;
 import com.example.android.activities.adapter.TodoViewHolder;
 import com.example.android.activities.fragment.CalendarFragment;
@@ -101,19 +97,36 @@ public class MainActivity extends AppCompatActivity {
 
                 builder.setTitle("추가할 카테고리를 입력해주세요");
                 builder.setView(input);
-                builder.setPositiveButton("추가", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("추가", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         MyUtils.addCategory(input.getText().toString());
+                        getSelectedFragment().refresh();
                         dialog.dismiss();
                     }
                 });
-                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                     }
                 });
                 AlertDialog alert = builder.create();
                 alert.show();
+                return false;
+            }
+        });
+        menu.getItem(4).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("삭제할 카테고리를 선택해주세요");
+                builder.setItems(MyUtils.getCategoriesMain(), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        MyUtils.removeCategory(MyUtils.getCategoriesMain()[i]);
+                        getSelectedFragment().refresh();
+                    }
+                });
+                builder.create().show();
                 return false;
             }
         });
@@ -125,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
         menu.getItem(0).setVisible(true);
         menu.getItem(1).setVisible(false);
         menu.getItem(3).setVisible(true);
+        menu.getItem(4).setVisible(true);
         menu.getItem(2).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.getItem(2).setTitle("삭제하기");
         menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -144,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         menu.getItem(0).setVisible(false);
         menu.getItem(1).setVisible(true);
         menu.getItem(3).setVisible(false);
+        menu.getItem(4).setVisible(false);
         menu.getItem(2).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.getItem(2).setTitle("삭제");
         menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -157,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void prepareView() {
-        Log.i(getSelectedFragment().toString(), String.valueOf(getSelectedFragment().getViewHolderList().size()));
         for(TodoViewHolder temp : getSelectedFragment().getViewHolderList()) {
             temp.prepareDelete();
         }
@@ -167,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
         for(TodoViewHolder temp : getSelectedFragment().getViewHolderList()) {
             if(temp.isChecked()) {
                 deleteTodo(temp.getNo());
-                Log.i("지우기", String.valueOf(temp.getNo()));
             }
         }
         getSelectedFragment().refresh();
@@ -306,9 +319,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 while(flag) {
                     try {
-                        Log.i("스레드", "잠");
                         Thread.sleep(5000);
-                        Log.i("스레드", "일남");
                         handler.post(runnable);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

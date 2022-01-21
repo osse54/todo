@@ -1,5 +1,4 @@
 package com.example.android.activities.fragment;
-import android.util.Log;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -79,8 +78,7 @@ public class Daily extends TodoFragment {
     public void onResume() {
         postView();
         MyUtils.adapters = new RecyclerView.Adapter[]{myExpandableAdapterUncomplete, myExpandableAdapterComplete};
-        myExpandableAdapterUncomplete.refresh();
-        myExpandableAdapterComplete.refresh();
+        refresh();
         setDailyDateView();
         super.onResume();
     }
@@ -128,8 +126,6 @@ public class Daily extends TodoFragment {
 
     private void setDailyDateView() {
         String time = MyUtils.getStringFromDate(new Date(), MyUtils.SHOWN_DATE_PATTERN);
-        Log.i("타임1", time);
-        Log.i("타임2", dailyDateView.getText().toString());
         if(!time.equals(dailyDateView.getText().toString())) {
             new Handler().post(new Runnable() {
                 @Override

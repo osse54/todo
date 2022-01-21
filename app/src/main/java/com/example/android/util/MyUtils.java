@@ -1,10 +1,9 @@
 package com.example.android.util;
 import java.util.*;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.android.activities.MainActivity;
@@ -28,6 +27,7 @@ public class MyUtils {
     private final static String ADDING_TODO_END = "addingTodoEnd";
 
     private final static String CATEGORY = "category";
+    private final static String CATEGORY_COUNT = "categoryCount";
 
     private final static Gson gson = new Gson();
 
@@ -148,27 +148,14 @@ public class MyUtils {
         saveList();
     }
 
-//    private static int findTodo(int no) {
-//        int result = -1;
-//        for(int i = 0; i < MAIN_ACTIVITY.getList().size(); i++) {
-//            if(MAIN_ACTIVITY.getList().get(i).getNo() == no) {
-//                i = result;
-//            }
-//        }
-//        return result;
-//    }
-
     public static SharedPreferences getSharedPreference() {
-        return MAIN_ACTIVITY.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return PreferenceManager.getDefaultSharedPreferences(MAIN_ACTIVITY);
     }
 
     public static void saveList() {
         HashSet<String> set = new HashSet<>();
         for(Todo temp : MAIN_ACTIVITY.getList()) {
-
             String str = gson.toJson(temp);
-            Log.i("지우기 Todo.no", String.valueOf(temp.no));
-            Log.i("지우기 json", str);
             set.add(str);
         }
         SharedPreferences.Editor editor = getSharedPreference().edit();
@@ -248,11 +235,19 @@ public class MyUtils {
         return strings;
     }
 
+    public static String[] getCategoriesMain() {
+        if(set == null) {
+            loadCategories();
+        }
+        return set.toArray(new String[0]);
+    }
+
     public static void saveCategories() {
         SharedPreferences.Editor editor = getSharedPreference().edit();
-        HashSet<String> set = new HashSet<>(Arrays.asList(getCategories()));
+        HashSet<String> set = new HashSet<>(Arrays.asList(getCategoriesMain()));
         set.remove("카테고리를 선택해주세요");
         editor.putStringSet(CATEGORY, set);
+        editor.putInt(CATEGORY_COUNT, set.size());
         editor.apply();
     }
 
@@ -261,7 +256,22 @@ public class MyUtils {
     }
 
     public static void addCategory(String category) {
+        if(set == null) {
+            loadCategories();
+        }
         set.add(category);
+        saveCategories();
+        loadCategories();
+    }
+
+    public static void removeCategory(String category) {
+        List<Todo> list = MAIN_ACTIVITY.getList();
+        for(Todo temp : list) {
+            if(temp.getCategory().equals(category)) {
+                list.remove(temp);
+            }
+        }
+        set.remove(category);
         saveCategories();
         loadCategories();
     }

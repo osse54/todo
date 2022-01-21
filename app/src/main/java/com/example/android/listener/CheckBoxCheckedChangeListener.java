@@ -1,6 +1,5 @@
 package com.example.android.listener;
 
-import android.widget.Adapter;
 import android.widget.CompoundButton;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.android.activities.adapter.DayAdapter;

@@ -250,7 +250,6 @@ public class AddTodo extends AppCompatActivity {
     }
 
     private String[] getFields() {
-        Log.i("날짜", MyUtils.getStringFromDate(calendar.getTime()));
         return new String[]{
                 name.getText().toString(),
                 String.valueOf(category.getSelectedItemPosition()),

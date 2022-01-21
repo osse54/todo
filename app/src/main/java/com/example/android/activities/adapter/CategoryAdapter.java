@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
@@ -24,8 +25,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private List<TodoViewHolder> viewHolderList;
 
     public CategoryAdapter() {
-        categories = new ArrayList<>(Arrays.asList(MyUtils.getCategories()));
-        categories.remove(0);
+        categories = new ArrayList<>(Arrays.asList(MyUtils.getCategoriesMain()));
         list = new ArrayList<>();
         viewHolderList = new ArrayList<>();
     }
@@ -61,6 +61,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         for(CategoryViewHolder temp : list) {
             temp.refresh();
         }
+        categories = new ArrayList<>(Arrays.asList(MyUtils.getCategoriesMain()));
+        notifyDataSetChanged();
     }
 
     public List<TodoViewHolder> getViewHolderList() {
