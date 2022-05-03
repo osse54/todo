@@ -43,7 +43,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
         
         <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/calendarRecyclerViewUnComplete"
+                android:id="@+id/calendarRecyclerViewUncomplete"
                 android:nestedScrollingEnabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

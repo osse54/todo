@@ -4,6 +4,10 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import com.example.android.R;
+import com.example.android.util.MyUtils;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class LoadingActivity extends AppCompatActivity {
 
@@ -17,8 +21,17 @@ public class LoadingActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                // 휴일 정보 불러오기, 핸들러 안에서 하면 애니메이션이 많이 끊김
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MyUtils.getHolidays(Calendar.getInstance().get(Calendar.YEAR));
+                    }
+                }).start();
+
                 finish();
             }
-        }, 2000);
+        }, 1000);
     }
 }

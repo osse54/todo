@@ -80,4 +80,12 @@ public class DayAdapter extends RecyclerView.Adapter<TodoViewHolder> {
     public ArrayList<TodoViewHolder> getViewHolderList() {
         return viewHolderList;
     }
+
+    public ArrayList<Todo> getMyList() {
+        return myList;
+    }
+
+    public boolean isCheck() {
+        return check;
+    }
 }

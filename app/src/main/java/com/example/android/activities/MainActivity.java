@@ -1,17 +1,18 @@
 package com.example.android.activities;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Handler;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.view.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
-
+import androidx.core.view.MenuItemCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.android.R;
 import com.example.android.activities.adapter.TodoViewHolder;
@@ -24,7 +25,8 @@ import com.example.android.util.MyUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -139,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
         menu.getItem(1).setVisible(false);
         menu.getItem(3).setVisible(true);
         menu.getItem(4).setVisible(true);
+
+        // https://stackoverflow.com/questions/15479522/substitute-to-menucompat-setshowasaction-on-android
         menu.getItem(2).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.getItem(2).setTitle("삭제하기");
         menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -159,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
         menu.getItem(1).setVisible(true);
         menu.getItem(3).setVisible(false);
         menu.getItem(4).setVisible(false);
+
+        // https://stackoverflow.com/questions/15479522/substitute-to-menucompat-setshowasaction-on-android
         menu.getItem(2).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.getItem(2).setTitle("삭제");
         menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {

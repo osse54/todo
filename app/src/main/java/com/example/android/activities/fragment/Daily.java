@@ -45,7 +45,7 @@ public class Daily extends TodoFragment {
 
         expandUncomplete = view.findViewById(R.id.uncompleteExpandBtn);
 
-        recyclerViewUncomplete = view.findViewById(R.id.calendarRecyclerViewUnComplete);
+        recyclerViewUncomplete = view.findViewById(R.id.calendarRecyclerViewUncomplete);
         if(linearLayoutManagerUncomplete == null) {
             linearLayoutManagerUncomplete = new LinearLayoutManager(getActivity());
         }

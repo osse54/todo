@@ -15,8 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.example.android.util.MyUtils;
 import com.google.gson.annotations.Expose;
+import com.naver.maps.geometry.LatLng;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -35,9 +37,10 @@ public class Todo implements Comparable<Todo> {
         시작 시간, 종료 시간 사용 방법
         https://junghn.tistory.com/entry/Java-%EB%82%A0%EC%A7%9C-%EA%B3%84%EC%82%B0-%EB%B0%A9%EB%B2%95%EB%85%84-%EC%9B%94-%EC%9D%BC-%EB%8D%94%ED%95%98%EA%B3%A0-%EB%B9%BC%EB%8A%94-%EB%B0%A9%EB%B2%95
      */
-    private String start;         // 일정 생성 시각
     private String end;           // 일정 종료 시각
-    private String cycle;         // 일정의 주기
+    private String locationName;    // 일정 위치
+    private String latitude; // 위도
+    private String longitude; // 경도
 
     private Todo(String name, String category, String explain, boolean complete, long no) {
         this.no = no;
@@ -47,16 +50,8 @@ public class Todo implements Comparable<Todo> {
         this.complete = complete;
     }
 
-    public static Todo getTodo(String name, String category, String explain, boolean complete, long no) {
-        return new Todo(name, category, explain, complete, no);
-    }
-
     public static Todo getTodo(String name, String category, String explain, boolean complete) {
         return new Todo(name, category, explain, complete, NEXT++);
-    }
-
-    public void setStart(String start) {
-        this.start = start;
     }
 
     public String getEnd() {
@@ -65,14 +60,6 @@ public class Todo implements Comparable<Todo> {
 
     public void setEnd(String end) {
         this.end = end;
-    }
-
-    public String getCycle() {
-        return cycle;
-    }
-
-    public void setCycle(String cycle) {
-        this.cycle = cycle;
     }
 
     public String getName() {
@@ -105,6 +92,35 @@ public class Todo implements Comparable<Todo> {
 
     public void setComplete(boolean complete) {
         this.complete = complete;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatLng(LatLng latLng) {
+        this.latitude = String.valueOf(latLng.latitude);
+        this.longitude = String.valueOf(latLng.longitude);
     }
 
     @Override

@@ -13,7 +13,7 @@
         app:showAsAction="always" />
     
     <item
-        android:title="삭제하기"
+        android:title="일정 삭제"
         app:showAsAction="never" />
     
     <item
